@@ -1,0 +1,14 @@
+#!/bin/bash
+case $BLOCK_BUTTON in
+        4) xbacklight -time 25 -inc 2 ;;
+        5) xbacklight -time 25 -dec 2 ;;
+esac
+
+
+MAX="$(cat /sys/class/backlight/intel_backlight/max_brightness)"
+CUR="$(cat /sys/class/backlight/intel_backlight/actual_brightness)"
+let PERCENT=($CUR*100)/$MAX
+#echo $PERCENT%
+printf "%.0f" $PERCENT
+echo %
+

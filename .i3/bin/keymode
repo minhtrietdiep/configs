@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Prints current keyboard layout
+#
+#MODE=$(xset -q | grep LED | awk '{ print $10 }' | cut -c5)
+
+case $BLOCK_BUTTON in
+	1) setxkbmap us ;;
+	3) setxkbmap us -variant intl ;;
+esac
+
+MODE=$(setxkbmap -query | grep variant)
+if [[ $MODE == "variant:    intl" ]] ; then
+	echo "INTL"
+else
+	echo "US"
+fi
