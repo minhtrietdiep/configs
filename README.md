@@ -1,2 +1,4 @@
-# configs
-Some configs.
+# Some configs
+
+This should be less crap.
+
