@@ -72,7 +72,7 @@ bindsym $win+e exec --no-startup-id urxvt -e ranger
 # rofi tools
 bindsym $mod+Tab exec --no-startup-id rofi -show window
 bindsym $win+r   exec --no-startup-id rofi -show run
-bindsym $win+Tab exec --no-startup-id ~/bin/scripts/i3_switch_workspace.sh
+bindsym $win+Tab exec --no-startup-id ~/bin/i3-switch-workspace.sh
 bindsym $win+d   exec --no-startup-id rofi -show drun
 
 # kill focused window
