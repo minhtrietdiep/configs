@@ -1,14 +1,38 @@
 #!/bin/bash
+# case $BLOCK_BUTTON in
+#         4) xbacklight -time 25 -inc 5 ;;
+#         5) xbacklight -time 25 -dec 5 ;;
+# esac
+
+let MAX="$(cat /sys/class/backlight/intel_backlight/max_brightness)"
+let CUR="$(cat /sys/class/backlight/intel_backlight/actual_brightness)"
+let MIN=$MAX/100
+let PERCENT5=($MAX*5)/100
+let DEST=$CUR
+
 case $BLOCK_BUTTON in
-        4) xbacklight -time 25 -inc 2 ;;
-        5) xbacklight -time 25 -dec 2 ;;
+    4) let DEST=$CUR+$PERCENT5 ;;
+    5) let DEST=$CUR-$PERCENT5 ;;
 esac
 
+case $@ in
+    2) let DEST=$CUR+$PERCENT5 ;;
+    1) let DEST=$CUR-$PERCENT5 ;;
+esac
 
-MAX="$(cat /sys/class/backlight/intel_backlight/max_brightness)"
+if [ "$DEST" -gt "$MAX" ]
+    then
+        let DEST=$MAX
+fi
+
+if [ "$DEST" -lt "$MIN" ]
+    then
+        let DEST=$MIN
+fi
+
+echo $DEST | sudo tee /sys/class/backlight/intel_backlight/brightness > /dev/null
+
 CUR="$(cat /sys/class/backlight/intel_backlight/actual_brightness)"
-let PERCENT=($CUR*100)/$MAX
-#echo $PERCENT%
-printf "%.0f" $PERCENT
-echo %
 
+let PERCENT=($CUR*100)/$MAX
+echo $PERCENT%

@@ -112,7 +112,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-PATH=$PATH:~/bin:~/bin/scripts
 
 PATH="/home/mt/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="/home/mt/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
@@ -125,4 +124,6 @@ eval $(thefuck --alias)
 trap 'echo -ne "\033]2;$(history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 
 alias cls='printf "\033c"'
+
+export PATH=~/bin:$PATH
 

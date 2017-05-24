@@ -1,0 +1,53 @@
+#!/bin/bash
+
+################################################################
+#
+# Usage: check-battery
+#
+# A tiny script to warn the user when the battery is
+# low. It also puts the laptop to sleep when battery
+# is critically low.
+#
+################################################################
+
+status=$(cat /sys/class/power_supply/BAT1/status)
+percent=$(cat /sys/class/power_supply/BAT1/capacity)
+percent_low="15"
+percent_crit="5"
+#echo $status
+#echo $percent
+
+if [[ "$status" == "Full" ]]; then
+#	echo "Full!"
+	exit
+fi
+
+if [[ "$status" == "Charging" ]]; then
+	if [[ -f /tmp/battery_warning ]]; then
+#		echo "Removed battery_warning."
+		rm /tmp/battery_warning
+	fi
+	exit
+fi
+
+if [[ "$percent" -lt "$percent_crit" && "$status" == "Discharging" ]]; then
+#	echo "Suspending."
+	systemctl suspend &
+	exit
+fi
+
+if [[ "$percent" -lt "$percent_low" ]]; then
+#	echo "Under threshold."
+	if [[ -f /tmp/battery_warning ]]; then
+		exit
+	fi
+	touch /tmp/battery_warning
+	i3-nagbar -m 'Battery is almost empty!' &
+elif [[ -f /tmp/battery_warning ]]; then
+#		echo "Removed battery_warning"
+		rm /tmp/battery_warning
+fi
+
+#if [[ "$percent" -gt "$percent_low " ]] ; then
+#	echo "Above threshold."
+#fi

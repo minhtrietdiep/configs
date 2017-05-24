@@ -16,12 +16,19 @@ use strict;
 use warnings;
 use utf8;
 
+use File::Slurp;
+
 my $acpi;
 my $status;
 my $percent;
 my $full_text;
 my $short_text;
 my $bat_number = $ENV{BLOCK_INSTANCE} || 0;
+
+my $current = read_file('/sys/class/power_supply/BAT1/current_now');
+my $voltage = read_file('/sys/class/power_supply/BAT1/voltage_now');
+my $power = ($voltage/1000000 * $current/1000000);
+my $rounded = sprintf "%.1f", $power;
 
 # read the first line of the "acpi" command output
 open (ACPI, "acpi -b | grep 'Battery $bat_number' |") or die;
@@ -38,15 +45,17 @@ $percent = $2;
 $full_text = "$percent%";
 
 if ($status eq 'Discharging') {
-	$full_text .= ' DIS';
+	$full_text .= ' ' . $rounded . 'W';
+	# $full_text .= $rounded;
+	# $full_text .= 'W';
 } elsif ($status eq 'Charging') {
-	$full_text .= ' CHR';
+	$full_text .= ' ⚡+';
 }
 
 $short_text = $full_text;
 
 if ($acpi =~ /(\d\d:\d\d):/) {
-	$full_text .= " ($1)";
+	$full_text .= " $1";
 }
 
 # print text
@@ -69,8 +78,6 @@ if ($status eq 'Discharging') {
 	if ($percent < 5) {
 		exit(33);
 	}
-} else {
-	print "#00FFFF\n";
 }
 
 exit(0);
